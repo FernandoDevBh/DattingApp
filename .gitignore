@@ -359,3 +359,4 @@ MigrationBackup/
 !.vscode/extensions.json
 
 appsettings.json
+appsettings.Development.json
