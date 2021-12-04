@@ -1,6 +1,5 @@
 using API.Extensions;
 
-var MyAllowSpecificOrigins = "MyAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -26,7 +25,7 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
-app.UseCors(MyAllowSpecificOrigins);
+app.UseCors(builder.Services.GetCorsPolicyName());
 
 app.UseAuthentication();
 
