@@ -1,3 +1,4 @@
+using API.Data;
 using API.Extensions;
 using API.Middleware;
 
@@ -34,5 +35,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+await app.Services.SeedData();
 
 app.Run();
