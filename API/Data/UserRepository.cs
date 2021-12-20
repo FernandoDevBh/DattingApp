@@ -33,6 +33,7 @@ namespace API.Data
     public async Task<MemberDTO> GetMemberAsync(string userName) =>
       await _context
             .Users
+            .Where(u => u.UserName == userName)
             .ProjectTo<MemberDTO>(_mapper.ConfigurationProvider)
             .FirstOrDefaultAsync();
 
