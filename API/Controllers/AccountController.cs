@@ -11,12 +11,12 @@ namespace API.Controllers
 {
   public class AccountController : BaseApiController
   {
-    private readonly DataContext _dataContext;
+    private readonly IUserRepository _userRepository;
     private readonly ITokenService _tokenService;
 
-    public AccountController(DataContext dataContext, ITokenService tokenService)
+    public AccountController(IUserRepository repository, ITokenService tokenService)
     {
-      _dataContext = dataContext;
+      _userRepository = repository;
       _tokenService = tokenService;
     }
 
@@ -33,8 +33,8 @@ namespace API.Controllers
         PasswordSalt = hmac.Key
       };
 
-      _dataContext.Users.Add(user);
-      await _dataContext.SaveChangesAsync();
+      _userRepository.Update(user);
+      await _userRepository.SaveAllAsync();
       return Ok(new UserDTO
       {
         Username = user.UserName,
@@ -45,7 +45,7 @@ namespace API.Controllers
     [HttpPost("login")]
     public async Task<ActionResult<UserDTO>> Login(LoginDTO login)
     {
-      var user = await _dataContext.Users.SingleOrDefaultAsync(u => u.UserName == login.Username);
+      var user = await _userRepository.GetByUserNameAsync(login.Username);
 
       if (user == null) return Unauthorized("Invalid Username or password");
 
@@ -61,13 +61,15 @@ namespace API.Controllers
       return Ok(new UserDTO
       {
         Username = user.UserName,
-        Token = _tokenService.CreateToken(user)
+        Token = _tokenService.CreateToken(user),
+        PhotoUrl = user.Photos.FirstOrDefault(p => p.IsMain)?.Url
       });
     }
 
     private async Task<bool> UserExists(string username)
     {
-      return await _dataContext.Users.AnyAsync(u => u.UserName == username.ToLower());
+      var user =await _userRepository.GetByUserNameAsync(username);
+      return user != null;
     }
   }
 }
