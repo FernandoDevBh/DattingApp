@@ -1,15 +1,8 @@
-﻿namespace API.DTOs
+﻿namespace API.DTOs;
+public class UserDTO
 {
-  public class UserDTO
-  {
-    public UserDTO()
-    {
-      Username =  string.Empty;
-      Token = string.Empty; 
-    }
-
     public string Username { get; set; }
     public string Token { get; set; }
     public string PhotoUrl { get; set; }
-  }
+    public string KnowAs { get; set; }
 }

@@ -5,29 +5,29 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.Data
+namespace API.Data;
+
+public class UserRepository : IUserRepository
 {
-  public class UserRepository : IUserRepository
-  {
     private readonly DataContext _context;
     private readonly IMapper _mapper;
     public UserRepository(DataContext context, IMapper mapper)
     {
-      _context = context;
-      _mapper = mapper;
+        _context = context;
+        _mapper = mapper;
     }
 
     public async Task<AppUser> GetByIdAsync(int id)
     {
-      return await _context.FindAsync<AppUser>(id);
+        return await _context.FindAsync<AppUser>(id);
     }
 
     public async Task<AppUser> GetByUserNameAsync(string userName)
     {
-      return await _context
-                    .Users
-                    .Include(e => e.Photos)
-                    .SingleOrDefaultAsync(e => e.UserName == userName);
+        return await _context
+                      .Users
+                      .Include(e => e.Photos)
+                      .SingleOrDefaultAsync(e => e.UserName == userName);
     }
 
     public async Task<MemberDTO> GetMemberAsync(string userName) =>
@@ -45,20 +45,24 @@ namespace API.Data
 
     public async Task<IEnumerable<AppUser>> GetUsersAsync()
     {
-      return await _context
-                    .Users
-                    .Include(e => e.Photos)
-                    .ToListAsync();
+        return await _context
+                      .Users
+                      .Include(e => e.Photos)
+                      .ToListAsync();
     }
 
     public async Task<bool> SaveAllAsync()
     {
-      return await _context.SaveChangesAsync() > 0;
+        return await _context.SaveChangesAsync() > 0;
     }
 
     public void Update(AppUser user)
     {
-      _context.Entry(user).State = EntityState.Modified;
+        _context.Entry(user).State = EntityState.Modified;
     }
-  }
+
+    public void Insert(AppUser user)
+    {
+        _context.Entry(user).State = EntityState.Added;
+    }
 }
