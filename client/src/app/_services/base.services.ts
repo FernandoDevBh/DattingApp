@@ -4,12 +4,17 @@ import { environment } from "src/environments/environment";
 import { PaginatedResult } from "../_models/pagination";
 
 export abstract class BaseService {
-    readonly baseUrl: string = environment.apiUrl;
+    protected readonly baseUrl: string = environment.apiUrl;
+    protected readonly baseHubUrl: string = environment.hubUrl;
 
-    constructor(public http: HttpClient) { }
+    constructor(protected http: HttpClient) { }
 
-    createUrl(endpoint: string): string {
+    protected createUrl(endpoint: string): string {
         return `${this.baseUrl}${endpoint}`;
+    }
+
+    protected createHubUrl(endpoint?: string){
+        return `${this.baseHubUrl}${endpoint || ''}`;
     }
 
     public getPaginatedResult<T>(url: string, params: HttpParams) {
