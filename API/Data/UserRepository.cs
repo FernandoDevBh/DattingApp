@@ -31,17 +31,23 @@ public class UserRepository : IUserRepository
                       .SingleOrDefaultAsync(e => e.UserName == userName);
     }
 
-    public async Task<MemberDTO> GetMemberAsync(string userName) =>
-      await _context
-            .Users
-            .Where(u => u.UserName == userName)
-            .ProjectTo<MemberDTO>(_mapper.ConfigurationProvider)
-            .FirstOrDefaultAsync();
+    public async Task<MemberDTO> GetMemberAsync(string userName, bool isCurrentUser)
+    {
+        var query = _context
+                        .Users
+                        .Where(u => u.UserName == userName)
+                        .ProjectTo<MemberDTO>(_mapper.ConfigurationProvider)
+                        .AsQueryable();
+                        
+        if(isCurrentUser) query = query.IgnoreQueryFilters();
+
+        return await query.FirstOrDefaultAsync();
+    }
 
     public async Task<PagedList<MemberDTO>> GetMembersAsync(UserParams userParams)
     {
        var query = _context
-                        .Users
+                        .Users                                                
                         .AsQueryable();
         
         query = query.Where(u => u.UserName != userParams.CurrentUsername);
@@ -86,6 +92,15 @@ public class UserRepository : IUserRepository
                         .Users
                         .Where(x => x.UserName == username)
                         .Select(x => x.Gender)
+                        .FirstOrDefaultAsync();
+    }
+
+    public async Task<AppUser> GetUserByPhotoId(int photoId)
+    {
+        return await _context.Users
+                        .Include(p => p.Photos)
+                        .IgnoreQueryFilters()
+                        .Where(p => p.Photos.Any(p => p.Id == photoId))
                         .FirstOrDefaultAsync();
     }
 }

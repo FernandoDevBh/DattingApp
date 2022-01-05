@@ -38,8 +38,8 @@ public class UsersController : BaseApiController
     }
 
     [HttpGet("{userName}", Name = "GetUser")]
-    public async Task<ActionResult<MemberDTO>> GetUsers(string userName) =>
-      Ok(await _unitOfWork.UserRepository.GetMemberAsync(userName));
+    public async Task<ActionResult<MemberDTO>> GetUser(string userName) =>
+      Ok(await _unitOfWork.UserRepository.GetMemberAsync(userName, User.GetUsername() == userName));
 
     [HttpPut]
     public async Task<ActionResult> UpdateUser(MemberUpdateDTO memberUpdateDTO)
@@ -67,11 +67,6 @@ public class UsersController : BaseApiController
             Url = result.SecureUrl.AbsoluteUri,
             PublicId = result.PublicId,
         };
-
-        if (user.Photos.Count == 0)
-        {
-            photo.IsMain = true;
-        }
 
         user.Photos.Add(photo);
 
