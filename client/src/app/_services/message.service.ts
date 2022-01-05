@@ -58,7 +58,7 @@ export class MessageService extends BaseService {
   }
 
   stopHubConnection(){
-    if(this.stopHubConnection){
+    if(this.hubConnection){
       this.hubConnection.stop();
     }    
   }

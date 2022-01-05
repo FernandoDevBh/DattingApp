@@ -8,11 +8,11 @@ namespace API.Interfaces
   {
     void Update(AppUser user);
     void Insert(AppUser user);
-    Task<bool> SaveAllAsync();
     Task<IEnumerable<AppUser>> GetUsersAsync();
     Task<AppUser> GetByIdAsync(int id);
     Task<AppUser> GetByUserNameAsync(string userName);
     Task<PagedList<MemberDTO>> GetMembersAsync(UserParams userParams);
     Task<MemberDTO> GetMemberAsync(string userName);
+    Task<string> GetUserGender(string username);
   }
 }
