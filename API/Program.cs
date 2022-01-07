@@ -5,6 +5,7 @@ using API.SignalR;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddControllers();
 

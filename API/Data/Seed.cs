@@ -17,13 +17,16 @@ public class Seed
         if (users == null) return;
 
         var roles = new List<AppRole>
-      {
-        new AppRole {Name = "Member"},
-        new AppRole {Name = "Admin"},
-        new AppRole {Name = "Moderator"},
-      };
-
-        roles.ForEach(async r => await roleManager.CreateAsync(r));
+        {
+          new AppRole {Name = "Member"},
+          new AppRole {Name = "Admin"},
+          new AppRole {Name = "Moderator"},
+        };
+        
+        foreach (var role in roles)
+        {
+            await roleManager.CreateAsync(role);
+        }
 
         foreach (var user in users)
         {
