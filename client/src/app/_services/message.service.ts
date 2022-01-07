@@ -7,6 +7,7 @@ import { Group } from '../_models/group';
 import { Message } from '../_models/message';
 import { User } from '../_models/user';
 import { BaseService } from './base.services';
+import { BusyService } from './busy.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,11 +17,12 @@ export class MessageService extends BaseService {
   private messageThreadSource = new BehaviorSubject<Message[]>([]);
   messageThread$ = this.messageThreadSource.asObservable();
 
-  constructor(http: HttpClient) {
+  constructor(http: HttpClient, private busyService: BusyService) {
     super(http);
   }
 
   createHubConnection(user: User, otherUsername: string){
+    this.busyService.busy();
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(this.createHubUrl(`message?user=${otherUsername}`), {
         accessTokenFactory: () => user.token
@@ -30,7 +32,8 @@ export class MessageService extends BaseService {
 
     this.hubConnection
         .start()
-        .catch(error => console.log(error));
+        .catch(error => console.log(error))
+        .finally(() => this.busyService.idle());
 
     this.hubConnection.on("ReceiveMessageThread", messages => {
       this.messageThreadSource.next(messages);
@@ -57,8 +60,9 @@ export class MessageService extends BaseService {
     });
   }
 
-  stopHubConnection(){
+  stopHubConnection(){    
     if(this.hubConnection){
+      this.messageThreadSource.next([]);
       this.hubConnection.stop();
     }    
   }
