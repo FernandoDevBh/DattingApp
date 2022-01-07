@@ -68,6 +68,7 @@
         [totalItems]="pagination.totalItems"
         [itemsPerPage]="pagination.itemsPerPage"
         [(ngModel)]="pagination.currentPage"
+        [maxSize]="10"
         (pageChanged)="pageChanged($event)"
         previousText="&lsaquo;"
         nextText="&rsaquo;"
